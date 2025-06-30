@@ -1,25 +1,28 @@
+import sys
+sys.path.append('.')
+from simple_stock_analyzer import analyze_stock
+# import os
 import requests
 import os
 
-def get_nvidia_price():
-    API_KEY = os.environ['FINNHUB_API_KEY']
-    url = f'https://finnhub.io/api/v1/quote?symbol=NVDA&token={API_KEY}'
-    try:
-        response = requests.get(url, timeout=10)
-        data = response.json()
-        price = data['c']
-        return f"NVIDIA 当前股价：${price}"
-    except Exception as e:
-        return f"获取股价失败：{e}"
+# 直接使用明文变量
+FINNHUB_API_KEY = os.environ.get('FINNHUB_API_KEY')
+TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
 
 def send_telegram_message(msg):
-    TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
-    CHAT_ID = os.environ['TELEGRAM_CHAT_ID']
-    url = f'https://api.telegram.org/bot{TOKEN}/sendMessage'
-    payload = {'chat_id': CHAT_ID, 'text': msg}
+    # TOKEN = os.environ['TELEGRAM_BOT_TOKEN']
+    # CHAT_ID = os.environ['TELEGRAM_CHAT_ID']
+    url = f'https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage'
+    payload = {'chat_id': TELEGRAM_CHAT_ID, 'text': msg}
     requests.post(url, data=payload)
 
 if __name__ == '__main__':
-    result = get_nvidia_price()
-    print(result)
-    send_telegram_message(result)
+    STOCK_NAME = 'TSLA'
+    stock_result = analyze_stock(STOCK_NAME, days=90, verbose=False)
+    if stock_result['success']:
+        msg = f"[{STOCK_NAME}分析]\n收盘价: ${stock_result['current_data']['close_price']:.2f}\nMACD: {stock_result['current_data']['macd']:.3f}\n趋势: {stock_result['status']['trend']}\n建议: {stock_result['recommendation']}"
+    else:
+        msg = f"[{STOCK_NAME}分析] 分析失败: {stock_result['error']}"
+    print(msg)
+    send_telegram_message(msg) 
