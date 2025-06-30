@@ -5,7 +5,9 @@ from simple_stock_analyzer import analyze_stock
 import requests
 import os
 
-# 直接使用明文变量
+#FINNHUB_API_KEY = 'd1fqoahr01qig3h3kmigd1fqoahr01qig3h3kmj0'
+#TELEGRAM_BOT_TOKEN = '8096117370:AAGNHZvW3HZboKbHDT5By6-S_iSErQtDOwM'
+#TELEGRAM_CHAT_ID = '8149043019'
 FINNHUB_API_KEY = os.environ.get('FINNHUB_API_KEY')
 TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID')
